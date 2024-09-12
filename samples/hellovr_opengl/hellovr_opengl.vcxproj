@@ -42,10 +42,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\bin\win32\</OutDir>
+    <IncludePath>$(projectDir)$$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\bin\win32\</OutDir>
+    <IncludePath>$(projectDir)$$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -91,6 +93,13 @@
     <ClCompile Include="..\shared\pathtools.cpp" />
     <ClCompile Include="..\shared\strtools.cpp" />
     <ClCompile Include="hellovr_opengl_main.cpp" />
+    <ClCompile Include="imGUI\backends\imgui_impl_dx9.cpp" />
+    <ClCompile Include="imGUI\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="imGUI\imgui.cpp" />
+    <ClCompile Include="imGUI\imgui_demo.cpp" />
+    <ClCompile Include="imGUI\imgui_draw.cpp" />
+    <ClCompile Include="imGUI\imgui_tables.cpp" />
+    <ClCompile Include="imGUI\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\lodepng.h" />
@@ -98,6 +107,14 @@
     <ClInclude Include="..\shared\pathtools.h" />
     <ClInclude Include="..\shared\strtools.h" />
     <ClInclude Include="..\shared\Vectors.h" />
+    <ClInclude Include="imGUI\backends\imgui_impl_dx9.h" />
+    <ClInclude Include="imGUI\backends\imgui_impl_win32.h" />
+    <ClInclude Include="imGUI\imconfig.h" />
+    <ClInclude Include="imGUI\imgui.h" />
+    <ClInclude Include="imGUI\imgui_internal.h" />
+    <ClInclude Include="imGUI\imstb_rectpack.h" />
+    <ClInclude Include="imGUI\imstb_textedit.h" />
+    <ClInclude Include="imGUI\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
