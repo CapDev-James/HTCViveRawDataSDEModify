@@ -355,18 +355,7 @@ bool CMainApplication::BInit()
 		return false;
 	}
 
-	// Loading the SteamVR Runtime
-	vr::EVRInitError eError = vr::VRInitError_None;
-    m_pHMD = vr::VR_Init(&eError, vr::VRApplication_Background);//vr::VRApplication_Scene );
-
-	if ( eError != vr::VRInitError_None )
-	{
-		m_pHMD = NULL;
-		char buf[1024];
-		sprintf_s( buf, sizeof( buf ), "Unable to init VR runtime: %s", vr::VR_GetVRInitErrorAsEnglishDescription( eError ) );
-		SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, "VR_Init Failed", buf, NULL );
-		return false;
-	}
+	
 
 
 	//m_pRenderModels = (vr::IVRRenderModels *)vr::VR_GetGenericInterface( vr::IVRRenderModels_Version, &eError );
@@ -381,49 +370,60 @@ bool CMainApplication::BInit()
 	//	return false;
 	//}
 
-	//int nWindowPosX = 700;
-	//int nWindowPosY = 100;
-	//Uint32 unWindowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+	int nWindowPosX = 700;
+	int nWindowPosY = 100;
+	Uint32 unWindowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-	//SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-	//SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
-	//SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY );
-	//SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 
 	//SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 0 );
 	//SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, 0 );
 	//if( m_bDebugOpenGL )
 	//	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG );
 
-	//m_pCompanionWindow = SDL_CreateWindow( "hellovr", nWindowPosX, nWindowPosY, m_nCompanionWindowWidth, m_nCompanionWindowHeight, unWindowFlags );
-	//if (m_pCompanionWindow == NULL)
-	//{
-	//	printf( "%s - Window could not be created! SDL Error: %s\n", __FUNCTION__, SDL_GetError() );
-	//	return false;
-	//}
+	m_pCompanionWindow = SDL_CreateWindow( "hellovr", nWindowPosX, nWindowPosY, m_nCompanionWindowWidth, m_nCompanionWindowHeight, unWindowFlags );
+	if (m_pCompanionWindow == NULL)
+	{
+	  printf( "%s - Window could not be created! SDL Error: %s\n", __FUNCTION__, SDL_GetError() );
+		return false;
+	}
 
-	//m_pContext = SDL_GL_CreateContext(m_pCompanionWindow);
-	//if (m_pContext == NULL)
-	//{
-	//	printf( "%s - OpenGL context could not be created! SDL Error: %s\n", __FUNCTION__, SDL_GetError() );
-	//	return false;
-	//}
+	m_pContext = SDL_GL_CreateContext(m_pCompanionWindow);
+	if (m_pContext == NULL)
+	{
+		printf( "%s - OpenGL context could not be created! SDL Error: %s\n", __FUNCTION__, SDL_GetError() );
+		return false;
+	}
 
 	//glewExperimental = GL_TRUE;
-	//GLenum nGlewError = glewInit();
-	//if (nGlewError != GLEW_OK)
-	//{
-	//	printf( "%s - Error initializing GLEW! %s\n", __FUNCTION__, glewGetErrorString( nGlewError ) );
-	//	return false;
-	//}
-	//glGetError(); // to clear the error caused deep in GLEW
+	GLenum nGlewError = glewInit();
+	if (nGlewError != GLEW_OK)
+	{
+		printf( "%s - Error initializing GLEW! %s\n", __FUNCTION__, glewGetErrorString( nGlewError ) );
+	    return false;
+	}
+	glGetError(); // to clear the error caused deep in GLEW
 
 	//if ( SDL_GL_SetSwapInterval( m_bVblank ? 1 : 0 ) < 0 )
 	//{
 	//	printf( "%s - Warning: Unable to set VSync! SDL Error: %s\n", __FUNCTION__, SDL_GetError() );
 	//	return false;
 	//}
+	// Loading the SteamVR Runtime
+	vr::EVRInitError eError = vr::VRInitError_None;
+	m_pHMD = vr::VR_Init(&eError, vr::VRApplication_Background);//vr::VRApplication_Scene );
 
+	if (eError != vr::VRInitError_None)
+	{
+		m_pHMD = NULL;
+		char buf[1024];
+		sprintf_s(buf, sizeof(buf), "Unable to init VR runtime: %s", vr::VR_GetVRInitErrorAsEnglishDescription(eError));
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "VR_Init Failed", buf, NULL);
+		return false;
+	}
 
 	m_strDriver = "No Driver";
 	m_strDisplay = "No Display";
@@ -450,19 +450,19 @@ bool CMainApplication::BInit()
  
 // 		m_MillisecondsTimer.start(1, this);
 // 		m_SecondsTimer.start(1000, this);
-	
-	//if (!BInitGL())
-	//{
-	//	printf("%s - Unable to initialize OpenGL!\n", __FUNCTION__);
-	//	return false;
-	//}
+	/*
+	if (!BInitGL())
+	{
+		printf("%s - Unable to initialize OpenGL!\n", __FUNCTION__);
+		return false;
+	}
 
 	if (!BInitCompositor())
 	{
 		printf("%s - Failed to initialize VR Compositor!\n", __FUNCTION__);
 		return false;
 	}
-
+	*/
 	return true;
 }
 
@@ -544,8 +544,8 @@ void CMainApplication::Shutdown()
 	
 	if( m_pContext )
 	{
-		glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_FALSE );
-		glDebugMessageCallback(nullptr, nullptr);
+		//glDebugMessageControl( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_FALSE );
+		//glDebugMessageCallback(nullptr, nullptr);
 		glDeleteBuffers(1, &m_glSceneVertBuffer);
 
 		if ( m_unSceneProgramID )
@@ -565,32 +565,32 @@ void CMainApplication::Shutdown()
             glDeleteProgram(m_unCompanionWindowProgramID);
         }
 
-        glDeleteRenderbuffers(1, &leftEyeDesc.m_nDepthBufferId);
-        glDeleteTextures(1, &leftEyeDesc.m_nRenderTextureId);
-        glDeleteFramebuffers(1, &leftEyeDesc.m_nRenderFramebufferId);
-        glDeleteTextures(1, &leftEyeDesc.m_nResolveTextureId);
-        glDeleteFramebuffers(1, &leftEyeDesc.m_nResolveFramebufferId);
+        //glDeleteRenderbuffers(1, &leftEyeDesc.m_nDepthBufferId);
+        //glDeleteTextures(1, &leftEyeDesc.m_nRenderTextureId);
+        //glDeleteFramebuffers(1, &leftEyeDesc.m_nRenderFramebufferId);
+        //glDeleteTextures(1, &leftEyeDesc.m_nResolveTextureId);
+        //glDeleteFramebuffers(1, &leftEyeDesc.m_nResolveFramebufferId);
 
-        glDeleteRenderbuffers(1, &rightEyeDesc.m_nDepthBufferId);
-        glDeleteTextures(1, &rightEyeDesc.m_nRenderTextureId);
-        glDeleteFramebuffers(1, &rightEyeDesc.m_nRenderFramebufferId);
-        glDeleteTextures(1, &rightEyeDesc.m_nResolveTextureId);
-        glDeleteFramebuffers(1, &rightEyeDesc.m_nResolveFramebufferId);
+      // glDeleteRenderbuffers(1, &rightEyeDesc.m_nDepthBufferId);
+       //glDeleteTextures(1, &rightEyeDesc.m_nRenderTextureId);
+ //      glDeleteFramebuffers(1, &rightEyeDesc.m_nRenderFramebufferId);
+  //     glDeleteTextures(1, &rightEyeDesc.m_nResolveTextureId);
+ //      glDeleteFramebuffers(1, &rightEyeDesc.m_nResolveFramebufferId);
 
         if (m_unCompanionWindowVAO != 0)
         {
-            glDeleteVertexArrays(1, &m_unCompanionWindowVAO);
+            //glDeleteVertexArrays(1, &m_unCompanionWindowVAO);
         }
         if (m_unSceneVAO != 0)
         {
-            glDeleteVertexArrays(1, &m_unSceneVAO);
+            //glDeleteVertexArrays(1, &m_unSceneVAO);
         }
         if (m_unControllerVAO != 0)
         {
-            glDeleteVertexArrays(1, &m_unControllerVAO);
+            //glDeleteVertexArrays(1, &m_unControllerVAO);
         }
     }
-
+	
     if (m_pCompanionWindow)
     {
         SDL_DestroyWindow(m_pCompanionWindow);
@@ -802,7 +802,7 @@ void CMainApplication::RunMainLoop()
 		bQuit = HandleInput();
 
         // we don't need the followings for a background process application
-		//RenderFrame();
+		RenderFrame();
 	}
 
 	//SDL_StopTextInput();
@@ -842,6 +842,7 @@ void CMainApplication::ProcessVREvent( const vr::VREvent_t & event )
 void CMainApplication::RenderFrame()
 {
 	// for now as fast as possible
+	/*
 	if ( m_pHMD )
 	{
 		RenderControllerAxes();
@@ -862,7 +863,7 @@ void CMainApplication::RenderFrame()
 		// 1/29/2014 mikesart
 		glFinish();
 	}
-
+	*/
 	// SwapWindow
 	{
 		SDL_GL_SwapWindow( m_pCompanionWindow );
@@ -884,6 +885,7 @@ void CMainApplication::RenderFrame()
 	}
 
 	// Spew out the controller and pose count whenever they change.
+	/*
 	if ( m_iTrackedControllerCount != m_iTrackedControllerCount_Last || m_iValidPoseCount != m_iValidPoseCount_Last )
 	{
 		m_iValidPoseCount_Last = m_iValidPoseCount;
@@ -893,6 +895,7 @@ void CMainApplication::RenderFrame()
 	}
 
 	UpdateHMDMatrixPose();
+	*/
 }
 
 
