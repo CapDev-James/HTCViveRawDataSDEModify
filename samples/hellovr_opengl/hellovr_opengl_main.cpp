@@ -42,7 +42,8 @@ void ThreadSleep( unsigned long nMilliseconds )
 	usleep( nMilliseconds * 1000 );
 #endif
 }
-
+#include<iostream>
+#include<fstream>
 class CGLRenderModel
 {
 public:
@@ -64,6 +65,7 @@ private:
 };
 
 static bool g_bPrintf = true;
+#include"DataType.h"
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -120,6 +122,9 @@ public:
 
 	void SetupRenderModelForTrackedDevice( vr::TrackedDeviceIndex_t unTrackedDeviceIndex );
 	CGLRenderModel *FindOrLoadRenderModel( const char *pchRenderModelName );
+
+private:
+	void writeDataToFile();
 
 private: 
 	bool m_bDebugOpenGL;
@@ -228,6 +233,9 @@ private: // OpenGL bookkeeping
 
 	std::vector< CGLRenderModel * > m_vecRenderModels;
 	CGLRenderModel *m_rTrackedDeviceToRenderModel[ vr::k_unMaxTrackedDeviceCount ];
+
+	positionCDT PositionData;
+	quaternionCDT RotationData;
 };
 
 //-----------------------------------------------------------------------------
@@ -349,6 +357,8 @@ std::string GetTrackedDeviceString( vr::IVRSystem *pHmd, vr::TrackedDeviceIndex_
 //-----------------------------------------------------------------------------
 bool CMainApplication::BInit()
 {
+	
+
 	if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 )
 	{
 		printf("%s - SDL could not initialize! SDL Error: %s\n", __FUNCTION__, SDL_GetError());
@@ -368,7 +378,7 @@ bool CMainApplication::BInit()
 		return false;
 	}
 
-
+	
 	//m_pRenderModels = (vr::IVRRenderModels *)vr::VR_GetGenericInterface( vr::IVRRenderModels_Version, &eError );
 	//if( !m_pRenderModels )
 	//{
@@ -633,7 +643,6 @@ vr::HmdVector3_t CMainApplication::GetPosition(vr::HmdMatrix34_t matrix) {
 //-----------------------------------------------------------------------------
 // Purpose: Prints the timestamped data in proper format(x,y,z).
 //-----------------------------------------------------------------------------
-
 void CMainApplication::printDevicePositionalData(const char * deviceName, vr::HmdMatrix34_t posMatrix, vr::HmdVector3_t position, vr::HmdQuaternion_t quaternion)
 {
     LARGE_INTEGER qpc; // Query Performance Counter for Acquiring high-resolution time stamps.
@@ -646,8 +655,18 @@ void CMainApplication::printDevicePositionalData(const char * deviceName, vr::Hm
         qpc.QuadPart, deviceName,
         position.v[0], position.v[1], position.v[2],
         quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+	//position Data 
+	PositionData.x = position.v[0];
+	PositionData.y = position.v[1];
+	PositionData.z = position.v[2];
+	//quaternion Data 
+	RotationData.qw = quaternion.w;
+	RotationData.qx = quaternion.x;
+	RotationData.qy = quaternion.y;
+	RotationData.qz = quaternion.z;
 
-
+	
+	 
     // Uncomment this if you want to print entire transform matrix that contains both position and rotation matrix.
     //dprintf("\n%lld,%s,%.5f,%.5f,%.5f,x: %.5f,%.5f,%.5f,%.5f,y: %.5f,%.5f,%.5f,%.5f,z: %.5f,qw: %.5f,qx: %.5f,qy: %.5f,qz: %.5f",
     //    qpc.QuadPart, whichHand.c_str(),
@@ -800,7 +819,7 @@ void CMainApplication::RunMainLoop()
 	while ( !bQuit )
 	{
 		bQuit = HandleInput();
-
+		//writeDataToFile();
         // we don't need the followings for a background process application
 		//RenderFrame();
 	}
@@ -1790,6 +1809,20 @@ CGLRenderModel *CMainApplication::FindOrLoadRenderModel( const char *pchRenderMo
 		vr::VRRenderModels()->FreeTexture( pTexture );
 	}
 	return pRenderModel;
+}
+
+void CMainApplication::writeDataToFile()
+{
+	std::string statement = "x" + std::to_string(PositionData.x) + "y" + std::to_string(PositionData.y) + "z" + std::to_string(PositionData.z) + "w" + std::to_string(RotationData.qw) + "a" + std::to_string(RotationData.qx)
+		+ "b" + std::to_string(RotationData.qy) + "c" + std::to_string(RotationData.qz);
+	std::ofstream outFile("output.txt", std::ios::trunc);
+	if (!outFile)
+	{
+		std::cerr << "Error opening file!" << std::endl;
+	}
+	outFile << statement.c_str() << std::endl;
+	outFile.close();
+	
 }
 
 

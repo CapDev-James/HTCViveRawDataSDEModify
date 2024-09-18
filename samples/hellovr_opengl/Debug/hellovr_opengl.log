@@ -1,1 +1,6 @@
-﻿  hellovr_opengl.vcxproj -> C:\Users\Admin\Desktop\ARProjects\openVRSDEModification\HTCViveRawDataSDEModify\samples\bin\win32\hellovr_opengl.exe
+﻿  hellovr_opengl_main.cpp
+C:\Users\Admin\Desktop\ARProjects\openVRSDEModification\HTCViveRawDataSDEModify\samples\hellovr_opengl\hellovr_opengl_main.cpp(663,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Admin\Desktop\ARProjects\openVRSDEModification\HTCViveRawDataSDEModify\samples\hellovr_opengl\hellovr_opengl_main.cpp(664,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Admin\Desktop\ARProjects\openVRSDEModification\HTCViveRawDataSDEModify\samples\hellovr_opengl\hellovr_opengl_main.cpp(665,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Admin\Desktop\ARProjects\openVRSDEModification\HTCViveRawDataSDEModify\samples\hellovr_opengl\hellovr_opengl_main.cpp(666,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  hellovr_opengl.vcxproj -> C:\Users\Admin\Desktop\ARProjects\openVRSDEModification\HTCViveRawDataSDEModify\samples\bin\win32\hellovr_opengl.exe
